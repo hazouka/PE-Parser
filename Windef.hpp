@@ -69,7 +69,7 @@ typedef struct OPTIONAL_HEADER {
   DWORD                LoaderFlags;
   DWORD                NumberOfRvaAndSizes;
   IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-} OPTIONAL_HEADER32, *POPTIONAL_HEADER32;
+} OPTIONAL_HEADER, *POPTIONAL_HEADER;
 
 typedef struct OPTIONAL_HEADER64 {
   WORD                 Magic;
