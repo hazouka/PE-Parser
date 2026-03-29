@@ -6,6 +6,7 @@ _IMAGE_DOS_HEADER DosHeader;
 FILE_HEADER FileHeader;
 std::vector<SECTION_HEADER> SECTION_TABLE;
 OPTIONAL_HEADER OptionalHeader; //OptionalHeader64 for 64bit
+IMG_IMPORT_DESCRIPTOR IMG_DESCRIPTOR;
 
 using std::print,std::println;
 
@@ -29,13 +30,12 @@ enum DATA_DIR
     RESERVED
 };
 
-auto
-Read_Dos_Header(HANDLE &File) -> void
+auto Read_Dos_Header(HANDLE &File) -> void
 {
     SetFilePointer(File, 0, 0, FILE_BEGIN);
     if (!ReadFile(File, &DosHeader, sizeof(_IMAGE_DOS_HEADER), 0, 0))
     {
-        println("Failed to read file 0x{:0X}", GetLastError());
+        println("Failed to read header 0x{:0X}", GetLastError());
         exit(1);
     }
 }
@@ -45,7 +45,7 @@ auto Read_File_Header(HANDLE &File) -> void
     SetFilePointer(File, DosHeader.e_lfanew, 0, FILE_BEGIN);
     if (!ReadFile(File, &FileHeader, sizeof(FILE_HEADER), 0, 0))
     {
-        println("Failed to read file 0x{:0X}", GetLastError());
+        println("Failed to read header 0x{:0X}", GetLastError());
         exit(1);
     }
 }
@@ -55,17 +55,16 @@ auto Read_Optional_Header(HANDLE &File) -> void
     SetFilePointer(File, DosHeader.e_lfanew + sizeof(FILE_HEADER), 0, FILE_BEGIN);
     if (!ReadFile(File, &OptionalHeader, sizeof(OptionalHeader), 0, 0))
     {
-        println("Failed to read file 0x{:0X}", GetLastError());
+        println("Failed to read header 0x{:0X}", GetLastError());
         exit(1);
     }
-    SetFilePointer(File, DosHeader.e_lfanew + sizeof(FILE_HEADER) + FileHeader.SizeOfOptionalHeader, 0, FILE_BEGIN);
 }
 auto Read_Section_Table(HANDLE &File) -> void
 {
     SECTION_TABLE.resize(FileHeader.NumberOfSections);
     if (!ReadFile(File, SECTION_TABLE.data(), (sizeof(SECTION_HEADER) * FileHeader.NumberOfSections), 0, 0))
     {
-        println("Failed to read section header 0x{:0X}", GetLastError());
+        println("Failed to read header 0x{:0X}", GetLastError());
         exit(1);
     }
 }
@@ -85,10 +84,18 @@ auto Import_Table_Section() -> int
     return 0;
 }
 
-auto PrintSectionInfo() -> void
+auto Read_IMAGE_IMPORT_DESCRIPTOR(HANDLE &File) -> void
 {
-    
+    int IT_SECTION_INDEX = Import_Table_Section();
+    DWORD Offset = OptionalHeader.DataDirectory[IMPORT].VirtualAddress - SECTION_TABLE[IT_SECTION_INDEX].VirtualAddress + SECTION_TABLE[IT_SECTION_INDEX].PointerToRawData;
+    SetFilePointer(File,Offset,0,FILE_BEGIN);
+    if (!ReadFile(File,&IMG_DESCRIPTOR, sizeof(IMG_IMPORT_DESCRIPTOR), 0, 0))
+    {
+        println("Failed to read structure 0x{:0X}", GetLastError());
+        exit(1);
+    }
 }
+
 
 int main(int argc, char *argv[])
 {
@@ -103,7 +110,8 @@ int main(int argc, char *argv[])
     Read_File_Header(File);
     Read_Optional_Header(File);
     Read_Section_Table(File);
-
-    int IT_SECTION_INDEX = Import_Table_Section();
+    Read_IMAGE_IMPORT_DESCRIPTOR(File);
+    
+    CloseHandle(File);
     return 0;
-}
+}   

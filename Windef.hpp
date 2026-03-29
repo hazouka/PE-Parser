@@ -119,3 +119,18 @@ typedef struct SECTION_HEADER {
   WORD  NumberOfLinenumbers;
   DWORD Characteristics;
 } SECTION_HEADER, *PSECTION_HEADER;
+
+
+
+  typedef struct IMG_IMPORT_DESCRIPTOR {
+      __C89_NAMELESS union {
+	DWORD Characteristics;
+	DWORD OriginalFirstThunk;
+      } DUMMYUNIONNAME;
+      DWORD TimeDateStamp;
+
+      DWORD ForwarderChain;
+      DWORD Name;
+      DWORD FirstThunk;
+    }   IMG_IMPORT_DESCRIPTOR;
+    typedef IMG_IMPORT_DESCRIPTOR UNALIGNED *PIMG_IMPORT_DESCRIPTOR;
