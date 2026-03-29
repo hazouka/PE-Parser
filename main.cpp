@@ -6,7 +6,7 @@ _IMAGE_DOS_HEADER DosHeader;
 FILE_HEADER FileHeader;
 std::vector<SECTION_HEADER> SECTION_TABLE;
 OPTIONAL_HEADER OptionalHeader; //OptionalHeader64 for 64bit
-IMG_IMPORT_DESCRIPTOR IMG_DESCRIPTOR;
+std::vector<IMG_IMPORT_DESCRIPTOR> IMG_DESCRIPTOR;
 
 using std::print,std::println;
 
@@ -89,10 +89,18 @@ auto Read_IMAGE_IMPORT_DESCRIPTOR(HANDLE &File) -> void
     int IT_SECTION_INDEX = Import_Table_Section();
     DWORD Offset = OptionalHeader.DataDirectory[IMPORT].VirtualAddress - SECTION_TABLE[IT_SECTION_INDEX].VirtualAddress + SECTION_TABLE[IT_SECTION_INDEX].PointerToRawData;
     SetFilePointer(File,Offset,0,FILE_BEGIN);
-    if (!ReadFile(File,&IMG_DESCRIPTOR, sizeof(IMG_IMPORT_DESCRIPTOR), 0, 0))
+    while(true)
     {
-        println("Failed to read structure 0x{:0X}", GetLastError());
-        exit(1);
+        IMG_IMPORT_DESCRIPTOR desc{};
+        if (!ReadFile(File, &desc, sizeof(IMG_IMPORT_DESCRIPTOR), 0, 0))
+        {
+            println("Failed to read structure 0x{:0X}", GetLastError());
+            exit(1);
+        }
+
+        if (desc.Name == 0) break;
+
+        IMG_DESCRIPTOR.push_back(desc);
     }
 }
 
