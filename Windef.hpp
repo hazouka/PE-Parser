@@ -122,7 +122,7 @@ typedef struct SECTION_HEADER {
 
 
 
-  typedef struct IMG_IMPORT_DESCRIPTOR {
+typedef struct IMG_IMPORT_DESCRIPTOR {
       __C89_NAMELESS union {
 	DWORD Characteristics;
 	DWORD OriginalFirstThunk;
@@ -134,3 +134,17 @@ typedef struct SECTION_HEADER {
       DWORD FirstThunk;
     }   IMG_IMPORT_DESCRIPTOR;
     typedef IMG_IMPORT_DESCRIPTOR UNALIGNED *PIMG_IMPORT_DESCRIPTOR;
+
+typedef struct IMG_EXPORT_DIRECTORY {
+      DWORD Characteristics;
+      DWORD TimeDateStamp;
+      WORD MajorVersion;
+      WORD MinorVersion;
+      DWORD Name;
+      DWORD Base;
+      DWORD NumberOfFunctions;
+      DWORD NumberOfNames;
+      DWORD AddressOfFunctions;
+      DWORD AddressOfNames;
+      DWORD AddressOfNameOrdinals;
+    } IMG_EXPORT_DIRECTORY,*PIMG_EXPORT_DIRECTORY;
