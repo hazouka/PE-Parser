@@ -185,9 +185,6 @@ int main(int argc, char *argv[])
     EXPORT_TABLE.resize(EXPORT_DIRECTORY.NumberOfFunctions);
     SetFilePointer(File, Offset_Functions, 0, FILE_BEGIN);
     ReadFile(File, EXPORT_TABLE.data(),(sizeof(DWORD) * EXPORT_DIRECTORY.NumberOfFunctions), 0, 0);
-    
-    for (auto &c : names)
-        println("{}", c);
 
 
     CloseHandle(File);
