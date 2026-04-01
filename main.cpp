@@ -26,7 +26,7 @@ enum DATA_DIR
 _IMAGE_DOS_HEADER DosHeader;
 FILE_HEADER FileHeader;
 std::vector<SECTION_HEADER> SECTION_TABLE;
-OPTIONAL_HEADER OptionalHeader; // OptionalHeader64 for 64bit
+OPTIONAL_HEADER64 OptionalHeader; // OPTIONAL_HEADER64 for 64bit
 std::vector<IMG_IMPORT_DESCRIPTOR> IMG_DESCRIPTOR;
 IMG_EXPORT_DIRECTORY EXPORT_DIRECTORY;
 HANDLE File;
@@ -198,10 +198,13 @@ auto ExportInfo(std::string_view Function) -> void
 
 int main(int argc, char *argv[])
 {
-    LPSTR ntdll = (LPSTR)"ntdll_dump.dll";
-    LPSTR kernel = (LPSTR) "kernel32_dump.dll";
-    LPSTR shell = (LPSTR) "shell32_dump.dll";
-    File = CreateFileA(shell, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+    if(argv[1] == nullptr)
+    {
+        print("Enter The .exe/dll name");
+        return 1;
+    }
+    LPSTR program = argv[1];
+    File = CreateFileA(program, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     if (File == INVALID_HANDLE_VALUE)
     {
         println("main failed to open {} 0x{:0X}", "", GetLastError());
@@ -212,10 +215,12 @@ int main(int argc, char *argv[])
     ReadFileHeader();
     ReadOptionalHeader();
     ReadSectionTable();
-    ReadExportDirectory();
-    GetExportOffsets();
-    ReadExportNames();
-    ReadExportTables();
+
+    println("{}",(char*)SECTION_TABLE[0].Name);
+    //ReadExportDirectory(); 
+    //GetExportOffsets(); if it exists
+    //ReadExportNames();
+    //ReadExportTables();
 
     CloseHandle(File);
     return 0;

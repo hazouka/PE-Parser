@@ -10,23 +10,16 @@ I only built this to learn as much as possible about the PE files and i thought 
 - Walks the section table
 - Parses the Export Directory function names, ordinals, and addresses
 - Parses the Import Descriptor table
-
 ## Usage
-change the filename in `main()` Specificy the location of the exe, run it.
+
 ```cpp
-File = CreateFileA("ntdll_dump.dll", GENERIC_READ, ...);
+main.exe FileToread
 ```
 
 ## Note
-you can just pass in argv[1]
-```cpp
-File = CreateFileA(argv[1], GENERIC_READ, ...);
-```
-then run it
-```
-Parse.exe read.exe
-```
 i was too lazy to Detect if the application is 64 bit or 32 bit so if your dealing with a 64 bit use
-```
+```cpp
 OptionalHeader64
 ```
+
+I will probably be reworking this to use a different way to read the file instead of using the windows api because thats limited to the windows os only
