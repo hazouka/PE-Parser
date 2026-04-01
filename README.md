@@ -12,7 +12,7 @@ I only built this to learn as much as possible about the PE files and i thought 
 - Parses the Import Descriptor table
 
 ## Usage
-Drop a DLL or EXE next to the binary, change the filename in `main()`, run it.
+change the filename in `main()` Specificy the location of the exe, run it.
 ```cpp
 File = CreateFileA("ntdll_dump.dll", GENERIC_READ, ...);
 ```
