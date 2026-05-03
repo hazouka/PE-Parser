@@ -1,6 +1,6 @@
 # PE Parser
 
-A Windows PE (Portable Executable) file parser written in modern C++.
+A Windows PE (Portable Executable) file parser written in C++.
 
 ## Why
 
@@ -10,8 +10,7 @@ I only built this to learn more about the PE format and the best way would be to
 
 - Parses the **DOS header**, **File header**, and **Optional header** (PE32 and PE64)
 - Walks the **section table** and resolves RVAs to raw file offsets
-- Parses the **Export Directory** — function names, ordinals, and addresses
-- Parses the **Import Descriptor** table
+- Parses the **Export Directory** and **Import Descriptor** table
 
 ## Usage
 
